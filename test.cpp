@@ -1,47 +1,39 @@
 #include <iostream>
-#include <thread>
-#include <cmath>
-#include <future>
 #include <iomanip>
+#include <cmath>
+#include <thread>
+#include <future>
 #include <exception>
 
 using namespace std;
 
-double Calculate_PI(int terms)
-{
-    if (terms < 1)
-        throw runtime_error("Cannot have terms less than 1.");
+double CalculatePI(int terms) {
     double sum{0.0};
-    for (int i = 0; i < terms; i++)
-    {
-        int sign = pow(-1, terms);
-        double term = 1.0 / (i * 2 + 1);
-        sum += term * sign;
+    for(int i = 0; i < terms; i++) {
+        int sign = pow(-1,i);
+        double term = 1.0/(i*2+1);
+        sum += sign*term;
     }
-    return sum * 4;
+    return sum*4;
 }
 
-int main()
-{
+int main() {
     promise<double> promise;
-
-    auto PI = [&](int terms)
-    {
+    auto PI = [&](int terms){
         try
         {
-            double result = Calculate_PI(terms);
+            auto result = CalculatePI(terms);
             promise.set_value(result);
         }
-        catch (...)
+        catch(...)
         {
             promise.set_exception(current_exception());
         }
+        
     };
 
     thread t1(PI, 1E6);
-
     future<double> future = promise.get_future();
-
     try
     {
         cout << setprecision(15) << future.get() << endl;
@@ -50,8 +42,8 @@ int main()
     {
         std::cerr << e.what() << '\n';
     }
-     
 
     t1.join();
     return 0;
+    
 }

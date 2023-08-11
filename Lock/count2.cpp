@@ -5,12 +5,6 @@
 
 using namespace std;
 
-void work() {
-    for(int i = 0; i < 10; i++) {
-        cout << "Loop " << i << endl;
-    }
-}
-
 int main() {
     atomic<int> count{0}; //sometimes the different functions of count instead of incrementing each other's values end up overriding them, so atomic removes that overriding
     // when one thread increments the count and reads the previous data of count and at next instant it preempts, and when other
